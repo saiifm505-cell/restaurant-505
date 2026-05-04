@@ -15,15 +15,19 @@
 <p id="tables"></p>
 
 <script>
+<script>
 let tables = 5;
 
 function book() {
+  let name = document.getElementById("name").value;
+
   if (tables > 0) {
     tables--;
-    document.getElementById("status").innerText = "تم الحجز";
+    document.getElementById("status").innerText = "تم الحجز بنجاح يا " + name;
   } else {
-    document.getElementById("status").innerText = "المطعم ممتلئ";
+    document.getElementById("status").innerText = "عذراً، المطعم ممتلئ";
   }
+
   update();
 }
 
@@ -38,6 +42,7 @@ function update() {
 }
 
 update();
+</script>
 </script>
 
 </body>
