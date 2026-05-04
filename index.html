@@ -1,1 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Restaurant Booking</title>
+</head>
+<body style="text-align:center">
 
+<h1>حجز مطعم</h1>
+
+<input type="text" id="name" placeholder="اسمك">
+<br><br>
+<button onclick="book()">احجز</button>
+
+<p id="status"></p>
+<p id="tables"></p>
+
+<script>
+let tables = 5;
+
+function book() {
+  if (tables > 0) {
+    tables--;
+    document.getElementById("status").innerText = "تم الحجز";
+  } else {
+    document.getElementById("status").innerText = "المطعم ممتلئ";
+  }
+  update();
+}
+
+function update() {
+  document.getElementById("tables").innerText = "المتبقي: " + tables;
+
+  if (tables > 0) {
+    document.body.style.backgroundColor = "lightgreen";
+  } else {
+    document.body.style.backgroundColor = "red";
+  }
+}
+
+update();
+</script>
+
+</body>
+</html>
