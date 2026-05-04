@@ -1,21 +1,102 @@
 <!DOCTYPE html>
-<html>
+<html lang="ar">
 <head>
-  <title>Restaurant Booking</title>
+  <meta charset="UTF-8">
+  <title>حجز مطعم 505</title>
+
+  <!-- يخلي الموقع مناسب للجوال -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #4facfe, #00f2fe);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      text-align: center;
+      width: 90%;
+      max-width: 400px;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+      font-size: 28px;
+    }
+
+    p {
+      color: gray;
+      margin-bottom: 20px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      font-size: 18px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      margin-bottom: 15px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      font-size: 18px;
+      border: none;
+      border-radius: 10px;
+      background-color: #4facfe;
+      color: white;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background-color: #007bff;
+    }
+
+    #status {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    #tables {
+      margin-top: 10px;
+      font-size: 18px;
+    }
+
+    .full {
+      background: #ff4d4d !important;
+      color: white;
+    }
+
+    .available {
+      background: linear-gradient(135deg, #4facfe, #00f2fe);
+    }
+  </style>
 </head>
 
-<body style="text-align:center; background-color: lightgreen;">
+<body class="available">
 
-<h1>🍽️ حجز مطعم 505</h1>
-<p>نظام حجز إلكتروني بسيط لمحاكاة المايكروبروسسر</p>
+<div class="container">
+  <h1>🍽️ حجز مطعم 505</h1>
+  <p>نظام حجز إلكتروني بسيط</p>
 
-<input type="text" id="name" placeholder="اسمك">
-<br><br>
+  <input type="text" id="name" placeholder="اكتب اسمك">
 
-<button onclick="book()">احجز</button>
+  <button onclick="book()">احجز</button>
 
-<p id="status"></p>
-<p id="tables"></p>
+  <p id="status"></p>
+  <p id="tables"></p>
+</div>
 
 <script>
 let tables = 5;
@@ -37,9 +118,11 @@ function update() {
   document.getElementById("tables").innerText = "المتبقي: " + tables;
 
   if (tables > 0) {
-    document.body.style.backgroundColor = "lightgreen";
+    document.body.classList.remove("full");
+    document.body.classList.add("available");
   } else {
-    document.body.style.backgroundColor = "red";
+    document.body.classList.remove("available");
+    document.body.classList.add("full");
   }
 }
 
