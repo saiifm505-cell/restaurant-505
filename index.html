@@ -81,6 +81,7 @@ button {
   <div class="seats" id="seats"></div>
 
   <p id="status"></p>
+  <button onclick="cancelBooking()">❌ إلغاء حجزي</button>
 </div>
 
 <div class="footer">
@@ -135,7 +136,6 @@ function renderSeats() {
 function bookSeat(index) {
   if (!currentUser) return;
 
-  // يمنع الحجز أكثر من مرة
   if (seats.includes(currentUser)) {
     document.getElementById("status").innerText = "حجزت بالفعل مقعد واحد";
     return;
@@ -153,12 +153,28 @@ function bookSeat(index) {
   renderSeats();
 }
 
-// إعادة تعيين كل 5 دقائق
+function cancelBooking() {
+  if (!currentUser) return;
+
+  let index = seats.indexOf(currentUser);
+
+  if (index === -1) {
+    document.getElementById("status").innerText = "ما عندك حجز";
+    return;
+  }
+
+  seats[index] = null;
+  localStorage.setItem("seats", JSON.stringify(seats));
+
+  document.getElementById("status").innerText = "تم إلغاء الحجز";
+  renderSeats();
+}
+
+// إعادة تعيين كل 5 دقائق (بدون رسالة)
 setInterval(() => {
   seats = Array(totalSeats).fill(null);
   localStorage.setItem("seats", JSON.stringify(seats));
   renderSeats();
-  document.getElementById("status").innerText = "تم إعادة تعيين الحجوزات";
 }, 300000);
 
 renderSeats();
