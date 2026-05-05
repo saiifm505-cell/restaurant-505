@@ -1,132 +1,118 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8">
-  <title>حجز مطعم 505</title>
+<meta charset="UTF-8">
+<title>حجز مطعم 505</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- يخلي الموقع مناسب للجوال -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #0f172a;
+  color: white;
+  text-align: center;
+}
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #4facfe, #00f2fe);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
+h1 { margin-top: 20px; }
 
-    .container {
-      background: white;
-      padding: 30px;
-      border-radius: 20px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-      text-align: center;
-      width: 90%;
-      max-width: 400px;
-    }
+.seats {
+  display: grid;
+  grid-template-columns: repeat(5, 60px);
+  gap: 10px;
+  justify-content: center;
+  margin: 30px;
+}
 
-    h1 {
-      margin-bottom: 10px;
-      font-size: 28px;
-    }
+.seat {
+  width: 60px;
+  height: 60px;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
 
-    p {
-      color: gray;
-      margin-bottom: 20px;
-    }
+.available { background: #22c55e; }
+.taken { background: #ef4444; }
 
-    input {
-      width: 100%;
-      padding: 12px;
-      font-size: 18px;
-      border-radius: 10px;
-      border: 1px solid #ccc;
-      margin-bottom: 15px;
-    }
+.info {
+  margin-top: 10px;
+}
 
-    button {
-      width: 100%;
-      padding: 12px;
-      font-size: 18px;
-      border: none;
-      border-radius: 10px;
-      background-color: #4facfe;
-      color: white;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-
-    button:hover {
-      background-color: #007bff;
-    }
-
-    #status {
-      margin-top: 15px;
-      font-weight: bold;
-    }
-
-    #tables {
-      margin-top: 10px;
-      font-size: 18px;
-    }
-
-    .full {
-      background: #ff4d4d !important;
-      color: white;
-    }
-
-    .available {
-      background: linear-gradient(135deg, #4facfe, #00f2fe);
-    }
-  </style>
+.footer {
+  position: fixed;
+  bottom: 10px;
+  left: 10px;
+  text-align: left;
+  font-size: 14px;
+  color: #ccc;
+}
+</style>
 </head>
 
-<body class="available">
+<body>
 
-<div class="container">
-  <h1>🍽️ حجز مطعم 505</h1>
-  <p>نظام حجز إلكتروني بسيط</p>
+<h1>🍽️ حجز مطعم 505</h1>
+<p>اختر مقعدك</p>
 
-  <input type="text" id="name" placeholder="اكتب اسمك">
+<div class="seats" id="seats"></div>
 
-  <button onclick="book()">احجز</button>
+<p class="info" id="status"></p>
 
-  <p id="status"></p>
-  <p id="tables"></p>
+<div class="footer">
+  <p>المادة: المعالجات الضغرى</p>
+  <p>الدكتور: د. وليد</p>
+  <p>الطلاب:</p>
+  <p>سيف القحطاني</p>
+  <p>خالد العتيبي</p>
+  <p>ضيف الله العتيبي</p>
+  <p>علي الصعب</p>
+  <p>سلطان جرولي</p>
 </div>
 
 <script>
-let tables = 5;
+let totalSeats = 20;
+let seats = JSON.parse(localStorage.getItem("seats")) || Array(totalSeats).fill(false);
 
-function book() {
-  let name = document.getElementById("name").value;
+function renderSeats() {
+  let container = document.getElementById("seats");
+  container.innerHTML = "";
 
-  if (tables > 0) {
-    tables--;
-    document.getElementById("status").innerText = "تم الحجز بنجاح يا " + name;
-  } else {
-    document.getElementById("status").innerText = "عذراً، المطعم ممتلئ";
-  }
+  seats.forEach((taken, index) => {
+    let div = document.createElement("div");
+    div.classList.add("seat");
+    div.classList.add(taken ? "taken" : "available");
+    div.innerText = index + 1;
 
-  update();
+    div.onclick = () => bookSeat(index);
+
+    container.appendChild(div);
+  });
 }
 
-function update() {
-  document.getElementById("tables").innerText = "المتبقي: " + tables;
-
-  if (tables > 0) {
-    document.body.classList.remove("full");
-    document.body.classList.add("available");
-  } else {
-    document.body.classList.remove("available");
-    document.body.classList.add("full");
+function bookSeat(index) {
+  if (seats[index]) {
+    document.getElementById("status").innerText = "هذا المقعد محجوز";
+    return;
   }
+
+  seats[index] = true;
+  localStorage.setItem("seats", JSON.stringify(seats));
+  document.getElementById("status").innerText = "تم حجز المقعد رقم " + (index+1);
+
+  renderSeats();
 }
 
-update();
+// تحديث كل 10 دقائق
+setInterval(() => {
+  seats = JSON.parse(localStorage.getItem("seats")) || seats;
+  renderSeats();
+}, 600000);
+
+renderSeats();
 </script>
 
 </body>
