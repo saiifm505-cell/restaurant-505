@@ -14,33 +14,51 @@ body {
   text-align: center;
 }
 
-h1 { margin-top: 20px; }
+.container {
+  padding: 20px;
+}
 
 .seats {
   display: grid;
-  grid-template-columns: repeat(5, 60px);
+  grid-template-columns: repeat(5, 70px);
   gap: 10px;
   justify-content: center;
-  margin: 30px;
+  margin: 20px;
 }
 
 .seat {
-  width: 60px;
-  height: 60px;
+  width: 70px;
+  height: 70px;
   border-radius: 10px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
+  font-size: 12px;
+  text-align: center;
+  padding: 5px;
 }
 
 .available { background: #22c55e; }
 .taken { background: #ef4444; }
 
-.info {
-  margin-top: 10px;
+input {
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: none;
+  width: 200px;
 }
+
+button {
+  padding: 10px 15px;
+  margin: 5px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.refresh { background: orange; color: white; }
 
 .footer {
   position: fixed;
@@ -55,12 +73,18 @@ h1 { margin-top: 20px; }
 
 <body>
 
-<h1>🍽️ حجز مطعم 505</h1>
-<p>اختر مقعدك</p>
+<div class="container">
+  <h1>🍽️ حجز مطعم 505</h1>
 
-<div class="seats" id="seats"></div>
+  <input type="text" id="username" placeholder="اكتب اسمك أولاً">
+  <br><br>
 
-<p class="info" id="status"></p>
+  <button onclick="refreshSeats()" class="refresh">🔄 تحديث</button>
+
+  <div class="seats" id="seats"></div>
+
+  <p id="status"></p>
+</div>
 
 <div class="footer">
   <p>المادة: المعالجات الضغرى</p>
@@ -75,17 +99,18 @@ h1 { margin-top: 20px; }
 
 <script>
 let totalSeats = 20;
-let seats = JSON.parse(localStorage.getItem("seats")) || Array(totalSeats).fill(false);
+let seats = JSON.parse(localStorage.getItem("seats")) || Array(totalSeats).fill(null);
 
 function renderSeats() {
   let container = document.getElementById("seats");
   container.innerHTML = "";
 
-  seats.forEach((taken, index) => {
+  seats.forEach((name, index) => {
     let div = document.createElement("div");
     div.classList.add("seat");
-    div.classList.add(taken ? "taken" : "available");
-    div.innerText = index + 1;
+    div.classList.add(name ? "taken" : "available");
+
+    div.innerHTML = name ? name : (index + 1);
 
     div.onclick = () => bookSeat(index);
 
@@ -94,23 +119,33 @@ function renderSeats() {
 }
 
 function bookSeat(index) {
-  if (seats[index]) {
-    document.getElementById("status").innerText = "هذا المقعد محجوز";
+  let user = document.getElementById("username").value;
+
+  if (!user) {
+    document.getElementById("status").innerText = "اكتب اسمك أولاً";
     return;
   }
 
-  seats[index] = true;
-  localStorage.setItem("seats", JSON.stringify(seats));
-  document.getElementById("status").innerText = "تم حجز المقعد رقم " + (index+1);
+  if (seats[index]) {
+    document.getElementById("status").innerText = "المقعد محجوز بواسطة " + seats[index];
+    return;
+  }
 
+  seats[index] = user;
+  localStorage.setItem("seats", JSON.stringify(seats));
+
+  document.getElementById("status").innerText = "تم الحجز باسم " + user;
   renderSeats();
 }
 
-// تحديث كل 10 دقائق
-setInterval(() => {
+function refreshSeats() {
   seats = JSON.parse(localStorage.getItem("seats")) || seats;
   renderSeats();
-}, 600000);
+  document.getElementById("status").innerText = "تم التحديث";
+}
+
+// تحديث تلقائي كل 10 دقايق
+setInterval(refreshSeats, 600000);
 
 renderSeats();
 </script>
