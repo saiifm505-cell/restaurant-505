@@ -64,13 +64,33 @@ button {
   color: white;
 }
 
-.footer {
+/* ===== Sidebar ===== */
+.sidebar {
   position: fixed;
-  bottom: 10px;
-  left: 10px;
-  text-align: left;
+  top: 10px;
+  right: 10px;
+  width: 200px;
+  background: rgba(255,255,255,0.1);
+  padding: 15px;
+  border-radius: 12px;
+  font-size: 13px;
+  text-align: right;
+  color: #fff;
+  backdrop-filter: blur(8px);
+}
+
+.sidebar h3 {
+  margin-top: 0;
   font-size: 14px;
-  color: #ccc;
+}
+
+/* (اختياري للجوال) */
+@media (max-width: 768px) {
+  .sidebar {
+    position: static;
+    width: 90%;
+    margin: 10px auto;
+  }
 }
 </style>
 </head>
@@ -90,10 +110,12 @@ button {
   <button id="cancelBtn" onclick="cancelBooking()">❌ إلغاء حجزي</button>
 </div>
 
-<div class="footer">
-  <p>المادة: المعالجات الضغرى</p>
+<div class="sidebar">
+  <h3>📘 معلومات المشروع</h3>
+  <p>المادة: المعالجات الصغرى</p>
   <p>الدكتور: د. وليد</p>
-  <p>الطلاب:</p>
+  <hr>
+  <p>👥 الطلاب:</p>
   <p>سيف القحطاني</p>
   <p>خالد العتيبي</p>
   <p>ضيف الله العتيبي</p>
