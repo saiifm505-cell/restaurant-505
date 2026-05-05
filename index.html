@@ -19,7 +19,7 @@ body {
 }
 
 .seats {
-  display: grid;
+  display: none;
   grid-template-columns: repeat(5, 70px);
   gap: 10px;
   justify-content: center;
@@ -58,8 +58,6 @@ button {
   cursor: pointer;
 }
 
-.refresh { background: orange; color: white; }
-
 .footer {
   position: fixed;
   bottom: 10px;
@@ -76,10 +74,9 @@ button {
 <div class="container">
   <h1>🍽️ حجز مطعم 505</h1>
 
-  <input type="text" id="username" placeholder="اكتب اسمك أولاً">
+  <input type="text" id="username" placeholder="اكتب اسمك">
   <br><br>
-
-  <button onclick="refreshSeats()" class="refresh">🔄 تحديث</button>
+  <button onclick="start()">دخول</button>
 
   <div class="seats" id="seats"></div>
 
@@ -100,6 +97,23 @@ button {
 <script>
 let totalSeats = 20;
 let seats = JSON.parse(localStorage.getItem("seats")) || Array(totalSeats).fill(null);
+let currentUser = null;
+
+function start() {
+  let name = document.getElementById("username").value;
+
+  if (!name) {
+    document.getElementById("status").innerText = "اكتب اسمك أولاً";
+    return;
+  }
+
+  currentUser = name;
+
+  document.getElementById("seats").style.display = "grid";
+  document.getElementById("status").innerText = "اختر مقعد واحد فقط";
+
+  renderSeats();
+}
 
 function renderSeats() {
   let container = document.getElementById("seats");
@@ -119,33 +133,33 @@ function renderSeats() {
 }
 
 function bookSeat(index) {
-  let user = document.getElementById("username").value;
+  if (!currentUser) return;
 
-  if (!user) {
-    document.getElementById("status").innerText = "اكتب اسمك أولاً";
+  // يمنع الحجز أكثر من مرة
+  if (seats.includes(currentUser)) {
+    document.getElementById("status").innerText = "حجزت بالفعل مقعد واحد";
     return;
   }
 
   if (seats[index]) {
-    document.getElementById("status").innerText = "المقعد محجوز بواسطة " + seats[index];
+    document.getElementById("status").innerText = "المقعد محجوز";
     return;
   }
 
-  seats[index] = user;
+  seats[index] = currentUser;
   localStorage.setItem("seats", JSON.stringify(seats));
 
-  document.getElementById("status").innerText = "تم الحجز باسم " + user;
+  document.getElementById("status").innerText = "تم الحجز بنجاح";
   renderSeats();
 }
 
-function refreshSeats() {
-  seats = JSON.parse(localStorage.getItem("seats")) || seats;
+// إعادة تعيين كل 5 دقائق
+setInterval(() => {
+  seats = Array(totalSeats).fill(null);
+  localStorage.setItem("seats", JSON.stringify(seats));
   renderSeats();
-  document.getElementById("status").innerText = "تم التحديث";
-}
-
-// تحديث تلقائي كل 10 دقايق
-setInterval(refreshSeats, 600000);
+  document.getElementById("status").innerText = "تم إعادة تعيين الحجوزات";
+}, 300000);
 
 renderSeats();
 </script>
